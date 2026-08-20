@@ -1,0 +1,27 @@
+# Render Blueprint for the Mingle backend (FastAPI in Docker).
+# In Render: New > Blueprint, point at this repo. Set the secret env vars in the
+# dashboard (they are marked sync:false so they are never committed).
+services:
+  - type: web
+    name: mingle-api
+    runtime: docker
+    plan: free
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: ENVIRONMENT
+        value: prod
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_KEY
+        sync: false
+      - key: SUPABASE_JWT_SECRET
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: FRONTEND_BASE_URL
+        sync: false
+      - key: RESPONSE_HARD_CAP
+        value: "200"
