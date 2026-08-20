@@ -110,3 +110,22 @@ def test_no_overlap_state():
     assert res.best_slot is None
     assert res.message is not None
     assert len(res.alternatives) == 3
+
+
+def test_rationale_carries_no_wall_clock_time():
+    """Regression: the server used to strftime a UTC timestamptz into the
+    rationale, so a 8:00 PM IST slot read "2:30 PM" and contradicted the
+    client-rendered header. The server cannot know the viewer's timezone, so it
+    must not format times at all. Time formatting belongs to the client."""
+    res = build_result(_seed_catchup())
+
+    assert res.rationale is not None
+    # s1 starts 17:00 UTC. Neither the UTC rendering nor any hour-like token
+    # may appear in a server-built sentence.
+    assert "PM" not in res.rationale
+    assert "AM" not in res.rationale
+    assert ":" not in res.rationale
+    assert "5:00" not in res.rationale
+    # The budget half is still there.
+    assert "200" in res.rationale
+    assert "500" in res.rationale

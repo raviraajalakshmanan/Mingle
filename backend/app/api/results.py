@@ -38,12 +38,6 @@ def _first_name(full: str) -> str:
     return full.split()[0] if full else full
 
 
-def _slot_label(slot: Slot) -> str:
-    if slot.label:
-        return slot.label
-    return slot.starts_at.strftime("%a %d %b, %I:%M %p").replace(" 0", " ")
-
-
 def build_result(catchup: dict) -> ResultOut:
     slots = [
         Slot(
@@ -121,8 +115,11 @@ def build_result(catchup: dict) -> ResultOut:
         )
     )
 
+    # No wall-clock time here on purpose. Slot times are timestamptz (UTC) and
+    # the server cannot know the viewer's timezone, so formatting one here
+    # printed UTC and contradicted the client-rendered header. The client owns
+    # time formatting; this sentence covers the budget half only.
     rationale = (
-        f"Most people are free {_slot_label(best.slot)}, and "
         f"₹{band.per_person_low}–{band.per_person_high} per person works comfortably "
         f"for almost everyone."
     )

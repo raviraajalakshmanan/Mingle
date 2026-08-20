@@ -7,7 +7,7 @@ import Typography from "@mui/material/Typography";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getResults, type ResultOut } from "../lib/api";
-import { formatSlot } from "../lib/format";
+import { formatSlot, formatSlotStart } from "../lib/format";
 
 export default function Result() {
   const { token } = useParams<{ token: string }>();
@@ -141,6 +141,7 @@ export default function Result() {
 
         {result.rationale && (
           <Alert severity="info">
+            {`Most people are free ${b.label ?? formatSlotStart(b.starts_at)}. `}
             {result.rationale}
           </Alert>
         )}
