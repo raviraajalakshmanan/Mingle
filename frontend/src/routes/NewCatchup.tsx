@@ -8,13 +8,14 @@ import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { MobileDateTimePicker } from "@mui/x-date-pickers/MobileDateTimePicker";
-import type { Dayjs } from "dayjs";
+import dayjs, { type Dayjs } from "dayjs";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import HowItWorks from "../components/HowItWorks";
 import ShareScreen from "../components/ShareScreen";
 import { createCatchup, type CatchupCreated, type CatchupType, type SlotIn } from "../lib/api";
 import { useAuth } from "../lib/auth";
+import { DATE_TIME_FORMAT } from "../lib/format";
 
 const TYPES: { value: CatchupType; label: string }[] = [
   { value: "casual", label: "Casual catch-up" },
@@ -29,6 +30,21 @@ interface SlotRow {
   end: Dayjs | null;
 }
 
+/**
+ * Now, rounded up to the next quarter hour. Prefilled times use this so a form
+ * left open for a minute does not start out already in the past.
+ */
+function nextQuarterHour(): Dayjs {
+  const now = dayjs().second(0).millisecond(0);
+  const over = now.minute() % 15;
+  return over === 0 ? now : now.add(15 - over, "minute");
+}
+
+/** A time option prefilled from `start`, running two hours. */
+function defaultSlot(start: Dayjs = nextQuarterHour()): SlotRow {
+  return { start, end: start.add(2, "hour") };
+}
+
 export default function NewCatchup() {
   const { session, loading, configured, signInWithGoogle, signOut } = useAuth();
   const navigate = useNavigate();
@@ -39,7 +55,7 @@ export default function NewCatchup() {
   const [message, setMessage] = useState("");
   const [deadline, setDeadline] = useState<Dayjs | null>(null);
   const [maxResponses, setMaxResponses] = useState("");
-  const [slots, setSlots] = useState<SlotRow[]>([{ start: null, end: null }]);
+  const [slots, setSlots] = useState<SlotRow[]>(() => [defaultSlot()]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [created, setCreated] = useState<CatchupCreated | null>(null);
@@ -101,9 +117,20 @@ export default function NewCatchup() {
 
   if (created) return <ShareScreen created={created} />;
 
+  // Nothing may be scheduled before this. Read fresh on every render so the
+  // bound keeps moving while the form sits open.
+  const earliest = dayjs();
+
   const updateSlot = (i: number, patch: Partial<SlotRow>) =>
     setSlots((rows) => rows.map((r, idx) => (idx === i ? { ...r, ...patch } : r)));
-  const addSlot = () => setSlots((rows) => [...rows, { start: null, end: null }]);
+  // Another option most often means the same time on another day.
+  const addSlot = () =>
+    setSlots((rows) => {
+      const prev = rows[rows.length - 1]?.start;
+      const next = nextQuarterHour();
+      const start = prev?.add(1, "day") ?? next;
+      return [...rows, defaultSlot(start.isBefore(next) ? next : start)];
+    });
   const removeSlot = (i: number) =>
     setSlots((rows) => (rows.length > 1 ? rows.filter((_, idx) => idx !== i) : rows));
 
@@ -121,7 +148,16 @@ export default function NewCatchup() {
         setError("Each option's end time must be after its start time.");
         return;
       }
+      if (s.start.isBefore(dayjs())) {
+        setError("Time options have to be in the future.");
+        return;
+      }
       cleaned.push({ starts_at: s.start.toISOString(), ends_at: s.end.toISOString() });
+    }
+
+    if (deadline && deadline.isBefore(dayjs())) {
+      setError("The response deadline has to be in the future.");
+      return;
     }
 
     setSubmitting(true);
@@ -206,12 +242,16 @@ export default function NewCatchup() {
               </Typography>
               <MobileDateTimePicker
                 label="Starts"
+                format={DATE_TIME_FORMAT}
+                minDateTime={earliest}
                 value={s.start}
                 onChange={(v) => updateSlot(i, { start: v })}
                 slotProps={{ textField: { fullWidth: true } }}
               />
               <MobileDateTimePicker
                 label="Ends"
+                format={DATE_TIME_FORMAT}
+                minDateTime={s.start ?? earliest}
                 value={s.end}
                 onChange={(v) => updateSlot(i, { end: v })}
                 slotProps={{ textField: { fullWidth: true } }}
@@ -238,6 +278,8 @@ export default function NewCatchup() {
 
           <MobileDateTimePicker
             label="Response deadline (optional)"
+            format={DATE_TIME_FORMAT}
+            minDateTime={earliest}
             value={deadline}
             onChange={setDeadline}
             slotProps={{

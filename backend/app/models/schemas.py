@@ -1,11 +1,24 @@
 """Pydantic request/response models for the API (docs/03-lld.md §3)."""
 
-from datetime import datetime
+from datetime import UTC, datetime, timedelta
 from typing import Literal
 
 from pydantic import BaseModel, Field, model_validator
 
 CatchupType = Literal["casual", "food", "activity", "outing", "trip"]
+
+# Clocks drift and requests take a moment to arrive, so a time this far behind
+# the server clock still counts as "now" instead of being rejected as past.
+PAST_GRACE = timedelta(minutes=2)
+
+
+def _utc(value: datetime) -> datetime:
+    """Read a naive datetime as UTC so comparisons never mix aware and naive."""
+    return value.replace(tzinfo=UTC) if value.tzinfo is None else value.astimezone(UTC)
+
+
+def _is_past(value: datetime) -> bool:
+    return _utc(value) < datetime.now(UTC) - PAST_GRACE
 
 
 # --- Create catch-up ---------------------------------------------------------
@@ -17,9 +30,12 @@ class SlotIn(BaseModel):
     label: str | None = None
 
     @model_validator(mode="after")
-    def _end_after_start(self) -> "SlotIn":
+    def _check_times(self) -> "SlotIn":
         if self.ends_at <= self.starts_at:
             raise ValueError("ends_at must be after starts_at")
+        # A catch-up can only be planned forwards. See docs/03-lld.md.
+        if _is_past(self.starts_at):
+            raise ValueError("starts_at must not be in the past")
         return self
 
 
@@ -32,6 +48,12 @@ class CatchupCreate(BaseModel):
     deadline: datetime | None = None
     # Optional creator-set cap on responses. Clamped server-side to the hard cap.
     max_responses: int | None = Field(default=None, ge=1)
+
+    @model_validator(mode="after")
+    def _deadline_not_past(self) -> "CatchupCreate":
+        if self.deadline is not None and _is_past(self.deadline):
+            raise ValueError("deadline must not be in the past")
+        return self
 
 
 class CatchupCreated(BaseModel):
