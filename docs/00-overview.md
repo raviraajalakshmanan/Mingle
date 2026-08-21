@@ -1,6 +1,6 @@
-# Koodal — Product Overview & MVP Scope
+# Mingle: Product Overview & MVP Scope
 
-> **Working name:** Koodal (Tamil *kūdal* — "a meeting / coming together"). Rename freely.
+> **Name:** Mingle.
 > **Status:** Planning. No implementation until the task backlog (`04-tasks.md`) is reviewed and approved.
 
 ---

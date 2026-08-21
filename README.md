@@ -12,8 +12,6 @@ and an inclusive budget, and suggests a few affordable things to do.
 > Core principle: the app helps people meet without making money the reason they
 > cannot meet.
 
-> Note: the repo folder is `koodal` (the old working name). The brand is Mingle.
-
 ## Features
 
 - **Create a catch-up** (Google sign-in): title, type, location, proposed time

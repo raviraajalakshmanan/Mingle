@@ -1,4 +1,4 @@
-# Koodal — High-Level Design (HLD)
+# Mingle: High-Level Design (HLD)
 
 Scope: the MVP three flows only. Aligns with decisions in `00-overview.md §8`.
 

@@ -1,4 +1,4 @@
-# Koodal — Task Backlog (for review before implementation)
+# Mingle: Task Backlog (for review before implementation)
 
 > **Do not start coding until this backlog is reviewed and approved.**
 > Tasks are grouped into milestones. Each has a rough size (S/M/L) and dependencies.

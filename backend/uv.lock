@@ -344,7 +344,7 @@ wheels = [
 ]
 
 [[package]]
-name = "koodal-backend"
+name = "mingle-backend"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [

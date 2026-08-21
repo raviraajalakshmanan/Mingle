@@ -111,6 +111,6 @@ project with Google auth enabled and both migrations applied.
 
 ## Notes
 
-- The repo folder is named `koodal` (the old name). The user-facing brand is
-  **Mingle**. Internal package names may still say koodal; only the brand changed.
+- The project is named **Mingle** everywhere: repo folder, package names, docs,
+  and UI. The old working name (koodal) is fully retired.
 - Do not commit or push unless the user asks.

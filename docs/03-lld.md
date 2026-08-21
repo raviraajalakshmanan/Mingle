@@ -1,4 +1,4 @@
-# Koodal — Low-Level Design (LLD)
+# Mingle: Low-Level Design (LLD)
 
 Concrete contracts: database schema, API endpoints, the matching + budget algorithm, the suggestion engine, and security specifics. This is the document to nail down before coding.
 
@@ -325,7 +325,7 @@ return top 2–4 by score, each with est_per_person and tags
 ## 9. Repository layout (proposed)
 
 ```
-koodal/
+mingle/
 ├── docs/                 # these planning docs
 ├── frontend/             # React + Vite
 │   └── src/{routes,components,lib(supabase,api)}
