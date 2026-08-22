@@ -86,7 +86,7 @@ export default function NewCatchup() {
           <div>
             <Typography variant="h1">Meet up, minus the money talk.</Typography>
             <Typography variant="subtitle1" sx={{ mt: 1 }}>
-              Mingle finds a time and an affordable plan that works for your whole group, while
+              MigleUp finds a time and an affordable plan that works for your whole group, while
               keeping everyone's budget private.
             </Typography>
           </div>

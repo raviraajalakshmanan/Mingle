@@ -1,4 +1,4 @@
-# Mingle: Task Backlog (for review before implementation)
+# MigleUp: Task Backlog (for review before implementation)
 
 > **Do not start coding until this backlog is reviewed and approved.**
 > Tasks are grouped into milestones. Each has a rough size (S/M/L) and dependencies.
@@ -178,3 +178,98 @@ Full frontend restyle to an Apple-inspired light design, before M5.
 - [ ] Schema + API contracts approved
 - [ ] Open questions OQ-1..OQ-7 answered
 - [ ] Milestone ordering / scope agreed
+
+---
+
+## Milestone 6 (2026-08-21): Currency as a property of the catch-up
+
+> **Superseded 2026-08-21 by `docs/05-internationalisation.md`,** which scopes this
+> to five markets, adds the bracket tables, the activity catalogue, and the group
+> context axis. The rule and the current-state audit below still hold. Read the
+> newer doc for the plan.
+
+**This supersedes OQ-4** ("Currency configurable? INR only (config constant)").
+That decision is fine for a single-country MVP and is now the thing blocking use
+outside India.
+
+### The rule
+
+**Currency is a property of the catch-up, chosen once at creation, and rendered
+identically for every viewer. It must never follow the viewer's locale.**
+
+A catch-up is one shared link across many people feeding a single aggregate. If
+the creator sets a `₹500-1000` band and an invitee's browser reports `en-US`, a
+locale-aware formatter would show them `$500-1000`. They would answer a different
+question than the one asked, and their answer would be aggregated with everyone
+else's as if it were the same unit. That is silent data corruption in the budget
+algorithm, not a display bug, and nothing in the UI would reveal it.
+
+**Contrast with time, deliberately.** The M5 timezone fix made slot times follow
+the *viewer* (`formatSlotStart` in `frontend/src/lib/format.ts`), because an
+instant is objective and each person needs it in their own frame. Money is the
+opposite: the amount is a shared contract and the unit is set by the creator.
+The two problems look alike and have opposite answers. Do not "fix" currency by
+copying the timezone pattern.
+
+### Why bands cannot be converted mechanically
+
+`₹200-500` is roughly `$2.40-6.00`, which is not a band any American would
+recognise or pick. FX conversion produces arithmetically correct, practically
+useless buckets. Every supported currency needs a **hand-picked band table** with
+round, culturally legible steps, not a multiplier over the INR table.
+
+The same applies to the suggestion catalogue in
+`backend/app/suggestions/rules.py:23-39`, which is coupled to India twice over:
+
+1. **Amounts.** `min_cost` / `max_cost` are bare integers that are implicitly
+   rupees. "Dinner out, 500 to 1500" is meaningless read as USD.
+2. **Content.** "Chai and a stroll", "a game of cricket/football", "Beach
+   evening", "Day trip (shared cab)" are India-specific by design and were the
+   right call for the MVP.
+
+So a new currency needs its own catalogue, not a translated one.
+
+### Current state
+
+| Where | What |
+|----|----|
+| `backend/app/budget/engine.py:16` | `CURRENCY = "INR"` module constant |
+| `backend/app/budget/engine.py:35` | `BudgetBand.currency` defaults to that constant |
+| `backend/app/models/schemas.py:168`, `api/results.py:150` | currency already returned to the client |
+| `frontend/src/lib/api.ts:132` | client already receives it, and ignores it |
+| `frontend/src/routes/Respond.tsx:19-23` | band chips hardcode `₹` labels and INR amounts |
+| `frontend/src/routes/Respond.tsx:209` | contribution field hardcodes `(optional, ₹)` |
+| `frontend/src/routes/Result.tsx:104,106,109,131` | four hardcoded `₹` literals |
+| `backend/app/api/results.py:123` | rationale hardcodes `₹` server-side |
+| `supabase/migrations/` | `catchups` has **no** currency column |
+
+The field is plumbed end to end and unused. Finishing the plumbing is most of the
+backend work.
+
+### Tasks
+
+| ID | Task | Size | Deps |
+|----|------|------|------|
+| T6.1 | Migration `0003_currency.sql`: add `currency char(3) not null default 'INR'` to `catchups`. Existing rows are all INR, so the default is a correct backfill. | S | - |
+| T6.2 | Backend: read currency from the catch-up and thread it into `compute_band`. Delete the `CURRENCY` module constant so there is no ambient default to fall back on. | M | T6.1 |
+| T6.3 | Hand-picked band table per currency (`backend/app/budget/bands.py`), served via the invite payload so `Respond.tsx` renders chips from the server instead of a local literal. Start with INR and one more currency to prove the shape. | M | T6.2 |
+| T6.4 | Backend: remove `₹` from the rationale string. The server returns amounts plus a currency code, the client formats. Same lesson as the M5 time fix: presentation belongs to the client. | S | T6.2 |
+| T6.5 | Frontend: `formatMoney(amount, currency)` in `lib/format.ts`, driven by the catch-up's currency and never by `navigator.language`. Replace all seven hardcoded `₹` sites. | M | T6.3, T6.4 |
+| T6.6 | Create flow: currency picker on `NewCatchup`. The creator's locale may *suggest* a default, but the choice is stored explicitly on the catch-up and never re-derived at read time. | M | T6.1, T6.5 |
+| T6.7 | Per-currency suggestion catalogue in `rules.py`, keyed by currency, with costs and content authored per market. Do not FX-convert the INR catalogue. | L | T6.2 |
+| T6.8 | Tests: currency flows create to result unchanged; a viewer with a foreign locale sees the creator's currency; no bare `₹` remains outside the INR catalogue. | M | T6.5, T6.7 |
+
+### Invariant to enforce
+
+**Currency is immutable once the first response lands.** Editing it afterwards
+would silently reinterpret every stored `budget_min` / `budget_max`, which are
+bare integers with no unit attached. Either block the edit, or treat a currency
+change as closing the catch-up and starting a new one. Add this alongside I1 when
+T6.1 lands.
+
+### Not in scope
+
+Multi-currency *within* one catch-up, and live FX. Both would break the single
+shared aggregate that the budget algorithm depends on. If people in different
+countries need to split a cost, that is a different product feature, not a
+formatting change.

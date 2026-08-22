@@ -1,4 +1,4 @@
-# Render Blueprint for the Mingle backend (FastAPI in Docker).
+# Render Blueprint for the MigleUp backend (FastAPI in Docker).
 # In Render: New > Blueprint, point at this repo. Set the secret env vars in the
 # dashboard (they are marked sync:false so they are never committed).
 services:

@@ -1,4 +1,4 @@
-# Mingle: User Flows
+# MigleUp: User Flows
 
 Three flows only. For each, the **privacy boundary** (what is visible vs. private) is called out explicitly, because privacy is the product.
 

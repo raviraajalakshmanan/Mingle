@@ -38,7 +38,7 @@ git config user.name "Your Name"
 
 git init                 # only if .git does not already exist
 git add -A
-git commit -m "Mingle MVP"
+git commit -m "MigleUp MVP"
 git branch -M main
 
 # create an EMPTY repo on github.com first (no README), then:

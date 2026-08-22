@@ -1,14 +1,14 @@
-# CLAUDE.md - Mingle
+# CLAUDE.md - MigleUp
 
 Guidance for Claude working on this repo. Read this first, then `docs/` for depth.
 
 ## What this app is
 
-**Mingle** is a private, low-pressure way to plan a group catch-up without anyone
+**MigleUp** is a private, low-pressure way to plan a group catch-up without anyone
 revealing what they can afford. One person creates a catch-up and shares a link.
 Each invitee privately picks available times, how many people they are bringing,
 and a comfortable spending range. Nobody sees anyone else's availability or budget.
-Mingle finds the best overlap of time + group size + an inclusive budget, and
+MigleUp finds the best overlap of time + group size + an inclusive budget, and
 suggests a few affordable things to do.
 
 Core principle: the app helps people meet without making money the reason they
@@ -103,7 +103,7 @@ project with Google auth enabled and both migrations applied.
 
 - Done: M0 foundations, M1 create, M2 respond, M3 matching/budget/suggestions,
   M4 results UI, anti-bot (honeypot + rate limit + response cap), MUI monochrome
-  UI, rebrand to Mingle.
+  UI, rebrand to MigleUp.
 - Next: **M5 - deploy** (see `DEPLOYMENT.md`). Also open in M5: finalize CORS to
   the prod origin, add an end-to-end happy-path test, optional analytics.
 - Bot defense decision: honeypot + rate limit + response cap are enough for the
@@ -111,6 +111,14 @@ project with Google auth enabled and both migrations applied.
 
 ## Notes
 
-- The project is named **Mingle** everywhere: repo folder, package names, docs,
-  and UI. The old working name (koodal) is fully retired.
+- The product is named **MigleUp** in all code, package names, docs, and UI.
+  Earlier working names (koodal, then Mingle) are retired in the codebase.
+- **Infrastructure slugs still carry the old `mingle` name** and are deliberately
+  left alone, because they identify live resources: the Render service
+  `mingle-api`, its URL `https://mingle-api-bpnf.onrender.com`, the Vercel URL
+  `https://mingle-ochre.vercel.app`, the GitHub repo `Mingle`, and the local repo
+  folder. Renaming these is a dashboard operation, not a code change. Do it only
+  when the user asks, and update `DEPLOY.md` plus `CORS_ORIGINS`,
+  `FRONTEND_BASE_URL`, `VITE_API_BASE_URL`, and the Supabase redirect URLs in the
+  same pass.
 - Do not commit or push unless the user asks.

@@ -10,7 +10,7 @@ def test_health_ok():
     assert resp.status_code == 200
     body = resp.json()
     assert body["status"] == "ok"
-    assert body["service"] == "Mingle"
+    assert body["service"] == "MigleUp"
     assert "version" in body
     # Reflects whether Supabase env is set; value is env-dependent, so just
     # assert it's a boolean and the probe didn't error.

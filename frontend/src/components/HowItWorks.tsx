@@ -13,7 +13,7 @@ const STEPS = [
   },
   {
     title: "Get the best plan",
-    body: "Mingle finds the time that works for most people and an affordable plan for the whole group.",
+    body: "MigleUp finds the time that works for most people and an affordable plan for the whole group.",
   },
 ];
 

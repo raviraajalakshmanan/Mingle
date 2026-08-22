@@ -16,7 +16,7 @@ export default function Landing() {
         <Stack spacing={2} sx={{ textAlign: "center", alignItems: "center" }}>
           <Typography variant="h1">Meet up, minus the money talk.</Typography>
           <Typography variant="subtitle1" sx={{ maxWidth: 440 }}>
-            Mingle helps friends plan a get-together where everyone's budget stays private, so
+            MigleUp helps friends plan a get-together where everyone's budget stays private, so
             nobody feels priced out.
           </Typography>
           <Button variant="contained" size="large" onClick={() => navigate("/new")}>

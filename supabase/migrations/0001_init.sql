@@ -1,4 +1,4 @@
--- Mingle: initial schema (docs/03-lld.md §2)
+-- MigleUp: initial schema (docs/03-lld.md §2)
 -- Privacy model: `responses` / `response_slots` have NO client SELECT policy, so
 -- the anon/authed client key can never read anyone's budget or availability.
 -- All writes and all aggregation go through the FastAPI backend (service role),

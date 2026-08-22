@@ -1,4 +1,4 @@
-"""Mingle FastAPI application entrypoint.
+"""MigleUp FastAPI application entrypoint.
 
 M0: app wiring, CORS, structured logging, and a health route. Feature routers
 (catchups, invite, results) are added from M1 onward.

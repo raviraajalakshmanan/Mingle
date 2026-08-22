@@ -1,6 +1,6 @@
-# Mingle: Product Overview & MVP Scope
+# MigleUp: Product Overview & MVP Scope
 
-> **Name:** Mingle.
+> **Name:** MigleUp.
 > **Status:** Planning. No implementation until the task backlog (`04-tasks.md`) is reviewed and approved.
 
 ---

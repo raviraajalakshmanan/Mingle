@@ -111,7 +111,7 @@ export default function Respond() {
     try {
       await submitResponse(token!, body);
       try {
-        localStorage.setItem(`mingle:responded:${token}`, "1");
+        localStorage.setItem(`migleup:responded:${token}`, "1");
       } catch {
         /* ignore */
       }

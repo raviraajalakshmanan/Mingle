@@ -1,6 +1,6 @@
 # DEPLOY.md - deployment rules and replay guide
 
-Written after the first successful production deploy of Mingle on 2026-08-20.
+Written after the first successful production deploy of MigleUp on 2026-08-20.
 
 `DEPLOYMENT.md` is the original short runbook. **This file is the one to read
 first.** It records what actually happened, the traps that cost time, and a
@@ -18,11 +18,20 @@ checklist you can reuse for any Vite + FastAPI + Supabase app on Vercel + Render
 
 Health probe: `curl -s https://mingle-api-bpnf.onrender.com/api/health`
 
-Expected: `{"status":"ok","service":"Mingle","version":"0.1.0","environment":"prod","supabase_configured":true}`
+Expected: `{"status":"ok","service":"MigleUp","version":"0.1.0","environment":"prod","supabase_configured":true}`
 
 Render service name is `mingle-api`. Render appended the random suffix `-bpnf`,
 so never hardcode the service name into a URL. Always copy the real one from the
 dashboard.
+
+> **Naming note.** The product was renamed to MigleUp, but every hosting slug
+> above still says `mingle`. That is intentional, not a stale doc: these are the
+> live resource names, and the URLs only resolve under them. Renaming a Render
+> service or a Vercel project issues a new URL, so it has to be done in the
+> dashboards together with `CORS_ORIGINS`, `FRONTEND_BASE_URL`,
+> `VITE_API_BASE_URL`, and the Supabase Site URL and redirect URLs. Until then,
+> the `service` field in the health response reads `MigleUp` while the host still
+> reads `mingle-api`, which is expected.
 
 ---
 
@@ -310,7 +319,7 @@ message names Google rather than Supabase.
 
 ## 5. Pre-flight checklist for a new app
 
-Copy this. It generalizes past Mingle.
+Copy this. It generalizes past MigleUp.
 
 **Before pushing**
 - [ ] All local checks pass, both lint and tests, both halves of the stack.

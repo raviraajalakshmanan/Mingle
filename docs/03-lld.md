@@ -1,4 +1,4 @@
-# Mingle: Low-Level Design (LLD)
+# MigleUp: Low-Level Design (LLD)
 
 Concrete contracts: database schema, API endpoints, the matching + budget algorithm, the suggestion engine, and security specifics. This is the document to nail down before coding.
 

@@ -1,12 +1,12 @@
-# Mingle
+# MigleUp
 
 **Meet up, minus the money talk.**
 
-Mingle is a private, low-pressure way to plan a group catch-up without anyone
+MigleUp is a private, low-pressure way to plan a group catch-up without anyone
 revealing what they can afford. One person creates a catch-up and shares a link.
 Each invitee privately picks their available times, how many people they are
 bringing, and a comfortable spending range. Nobody sees anyone else's
-availability or budget. Mingle then finds the best overlap of time, group size,
+availability or budget. MigleUp then finds the best overlap of time, group size,
 and an inclusive budget, and suggests a few affordable things to do.
 
 > Core principle: the app helps people meet without making money the reason they
