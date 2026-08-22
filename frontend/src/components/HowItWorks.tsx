@@ -1,6 +1,7 @@
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import { brandGradient } from "../theme";
 
 const STEPS = [
   {
@@ -28,7 +29,7 @@ export default function HowItWorks() {
               width: 30,
               height: 30,
               borderRadius: "50%",
-              bgcolor: "primary.main",
+              backgroundImage: brandGradient("action"),
               color: "#fff",
               display: "flex",
               alignItems: "center",

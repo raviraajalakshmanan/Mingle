@@ -6,6 +6,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { useNavigate } from "react-router-dom";
 import HowItWorks from "../components/HowItWorks";
+import { LogoMark } from "../components/Logo";
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -14,6 +15,7 @@ export default function Landing() {
     <Paper elevation={0} sx={{ p: { xs: 3, sm: 5 } }}>
       <Stack spacing={4}>
         <Stack spacing={2} sx={{ textAlign: "center", alignItems: "center" }}>
+          <LogoMark size={76} />
           <Typography variant="h1">Meet up, minus the money talk.</Typography>
           <Typography variant="subtitle1" sx={{ maxWidth: 440 }}>
             MigleUp helps friends plan a get-together where everyone's budget stays private, so

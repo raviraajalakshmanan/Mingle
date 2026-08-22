@@ -19,9 +19,18 @@ cannot meet.
 1. **Never use the em dash character anywhere** (UI text, comments, docs, chat).
    Use periods or commas. En dashes in numeric ranges (for example "5-7 PM",
    budget bands) are fine.
-2. **UI is monochrome Apple style**: near-black `#1d1d1f` primary, white surfaces,
-   gray `#6e6e73` secondary text. No blue or colored accents. All styling flows
-   from `frontend/src/theme.ts`.
+2. **Monochrome Apple foundation, brand gradient as a limited accent.** Structure
+   and text stay near-black `#1d1d1f` on white surfaces with gray `#6e6e73`
+   secondary text. The purple-to-teal brand gradient is reserved for the logo, the
+   single primary action on a screen, selected chips, and step numerals. Never
+   blue. All styling flows from `frontend/src/theme.ts`, which exports `BRAND` and
+   `brandGradient()`.
+   **Colour is split by contrast role, do not mix the two pairs.** The vivid pair
+   (`BRAND.purple` `#7824f0`, `BRAND.teal` `#00ccb4`) is sampled from the logo and
+   is decorative only, never behind text: raw teal is 2.04:1 on white and fails
+   WCAG. Anything carrying white text uses `brandGradient("action")`
+   (`#6d1bd8` at 7.50:1 to `#0a7d70` at 5.02:1). Brand colour as text on white
+   uses `BRAND.accent` `#5f17c4` (8.73:1).
 3. **Errors render elegantly** as a soft rose panel (see `MuiAlert` overrides in
    the theme), never a loud red bar. Alerts have no icons.
 4. **Privacy invariant (I1)**: no API path ever returns an individual response's

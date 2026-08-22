@@ -2,18 +2,34 @@ import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
-import { Outlet } from "react-router-dom";
+import { Link as RouterLink, Outlet } from "react-router-dom";
+import { LogoLockup } from "./components/Logo";
 
 export default function App() {
   return (
     <Box
       sx={{
         minHeight: "100dvh",
-        py: { xs: 3, sm: 6 },
+        py: { xs: 2.5, sm: 4 },
         display: "flex",
         flexDirection: "column",
       }}
     >
+      <Container maxWidth="sm">
+        <Box
+          component="header"
+          sx={{ display: "flex", justifyContent: "center", mb: { xs: 3, sm: 4 } }}
+        >
+          <RouterLink
+            to="/"
+            aria-label="MigleUp home"
+            style={{ display: "inline-flex", textDecoration: "none" }}
+          >
+            <LogoLockup height={30} />
+          </RouterLink>
+        </Box>
+      </Container>
+
       <Container maxWidth="sm" sx={{ flex: 1 }}>
         <Outlet />
       </Container>

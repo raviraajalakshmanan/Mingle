@@ -1,16 +1,44 @@
 import { createTheme } from "@mui/material/styles";
 
-// Apple-inspired monochrome theme: white surfaces, near-black ink, soft grays,
-// no blue. Restrained, elegant, mobile-first. Errors are shown as a refined
-// rose-tinted panel rather than a loud red bar.
-const INK = "#1d1d1f"; // Apple near-black
+// MigleUp theme. Apple-inspired monochrome foundation (white surfaces, near-black
+// ink, soft grays) with the brand purple-to-teal gradient used as a deliberate,
+// limited accent. Errors stay a refined rose panel, never a loud red bar.
+//
+// Colour roles are split by contrast, which is why there are two purples and two
+// teals. The vivid pair is sampled straight from the logo and is decorative only.
+// The deep pair is the one allowed under white text: raw teal #00ccb4 sits at
+// 2.04:1 against white and would be unreadable on a button.
+const INK = "#1d1d1f"; // Apple near-black, body copy and headings
 const GRAY = "#6e6e73"; // secondary text
 const ERROR = "#b3261e";
+
+export const BRAND = {
+  /** Vivid logo purple. Decorative surfaces only, never behind text. */
+  purple: "#7824f0",
+  /** Vivid logo teal. Decorative surfaces only, never behind text. */
+  teal: "#00ccb4",
+  /** Wordmark ink from the lockup. */
+  navy: "#0a0a35",
+  /** Gradient start under white text. 7.50:1, AAA. */
+  actionFrom: "#6d1bd8",
+  /** Gradient end under white text. 5.02:1, AA. */
+  actionTo: "#0a7d70",
+  /** Brand purple as text on white. 8.73:1, AAA. */
+  accent: "#5f17c4",
+} as const;
+
+/** The brand gradient. Decorative by default, "action" for anything under text. */
+export const brandGradient = (variant: "vivid" | "action" = "vivid") =>
+  variant === "vivid"
+    ? `linear-gradient(135deg, ${BRAND.purple} 0%, ${BRAND.teal} 100%)`
+    : `linear-gradient(135deg, ${BRAND.actionFrom} 0%, ${BRAND.actionTo} 100%)`;
+
+const ACTION_HOVER = "linear-gradient(135deg, #5f17c4 0%, #08655b 100%)";
 
 const theme = createTheme({
   palette: {
     mode: "light",
-    primary: { main: INK, contrastText: "#ffffff" },
+    primary: { main: BRAND.actionFrom, contrastText: "#ffffff" },
     secondary: { main: GRAY },
     error: { main: ERROR },
     background: { default: "#f5f5f7", paper: "#ffffff" },
@@ -35,10 +63,24 @@ const theme = createTheme({
           borderRadius: 980,
           padding: ownerState.size === "large" ? "13px 26px" : "10px 22px",
           fontSize: "1rem",
+          // Primary action carries the brand gradient. Secondary actions stay
+          // neutral so a screen never shows two competing colour claims.
           ...(ownerState.variant === "contained" &&
             ownerState.color === "primary" && {
-              backgroundColor: INK,
-              "&:hover": { backgroundColor: "#000000" },
+              backgroundImage: brandGradient("action"),
+              backgroundColor: BRAND.actionFrom, // fallback if gradients are unsupported
+              "&:hover": { backgroundImage: ACTION_HOVER },
+              "&.Mui-disabled": {
+                backgroundImage: "none",
+                backgroundColor: "rgba(0,0,0,0.12)",
+                color: "rgba(0,0,0,0.32)",
+              },
+            }),
+          // Tertiary actions stay neutral so each screen makes one colour claim.
+          ...(ownerState.variant === "text" &&
+            ownerState.color === "primary" && {
+              color: INK,
+              "&:hover": { backgroundColor: "rgba(0,0,0,0.04)" },
             }),
           ...(ownerState.variant === "outlined" &&
             ownerState.color === "primary" && {
@@ -46,6 +88,10 @@ const theme = createTheme({
               color: INK,
               "&:hover": { borderColor: INK, backgroundColor: "rgba(0,0,0,0.03)" },
             }),
+          "&.Mui-focusVisible": {
+            outline: `2px solid ${BRAND.accent}`,
+            outlineOffset: 2,
+          },
         }),
       },
     },
@@ -60,8 +106,19 @@ const theme = createTheme({
         root: {
           borderRadius: 12,
           backgroundColor: "#fff",
-          "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: INK },
+          "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+            borderColor: BRAND.accent,
+            borderWidth: 2,
+          },
         },
+      },
+    },
+    MuiInputLabel: {
+      styleOverrides: { root: { "&.Mui-focused": { color: BRAND.accent } } },
+    },
+    MuiCheckbox: {
+      styleOverrides: {
+        root: { color: "rgba(0,0,0,0.32)", "&.Mui-checked": { color: BRAND.accent } },
       },
     },
     MuiChip: {
@@ -69,8 +126,18 @@ const theme = createTheme({
         root: ({ ownerState }) => ({
           borderRadius: 980,
           fontWeight: 500,
+          // A selected chip is a choice the person made, so it earns brand colour.
           ...(ownerState.variant === "filled" &&
-            ownerState.color === "primary" && { backgroundColor: INK }),
+            ownerState.color === "primary" && {
+              backgroundImage: brandGradient("action"),
+              backgroundColor: BRAND.actionFrom,
+              color: "#fff",
+              "&:hover": { backgroundImage: ACTION_HOVER },
+            }),
+          ...(ownerState.variant === "outlined" && {
+            borderColor: "rgba(0,0,0,0.18)",
+            color: INK,
+          }),
         }),
       },
     },
@@ -81,7 +148,9 @@ const theme = createTheme({
           borderRadius: 14,
           padding: "12px 16px",
           fontSize: "0.92rem",
-          // Neutral, elegant informational panel (used for privacy notes).
+          // Neutral, elegant informational panel (used for privacy notes). Kept
+          // grey on purpose: the privacy promise should read as calm, not as a
+          // marketing moment.
           ...(ownerState.severity === "info" && {
             backgroundColor: "#f0f0f2",
             color: INK,
